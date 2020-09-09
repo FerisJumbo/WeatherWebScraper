@@ -26,6 +26,7 @@ namespace WeatherWebScrapper
 
         static String weatherBransonMO;
         static String weatherNaplesFL;
+        static String weatherHutchMN;
 
         Weather weather;
 
@@ -40,6 +41,7 @@ namespace WeatherWebScrapper
         {
             weatherBransonMO = "https://www.wunderground.com/weather/us/mo/branson";
             weatherNaplesFL = "https://www.wunderground.com/weather/us/fl/naples";
+            weatherHutchMN = "https://www.wunderground.com/weather/us/mn/hutchinson";
 
             btnBranson.Enabled = true;
             btnNaples.Enabled = true;
@@ -47,6 +49,10 @@ namespace WeatherWebScrapper
             txtbxCustomURL.Enabled = false;
             btnVisitWeb.Enabled = false;
             lblInfo.Enabled = false;
+
+            numIndexError.Value = 1;
+
+            txtbxCustomURL.Text = "https://www.wunderground.com/weather/";
 
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--disable-gpu");
@@ -57,35 +63,112 @@ namespace WeatherWebScrapper
 
         private void btnScrape_Click(object sender, EventArgs e)
         {
-            ReadOnlyCollection<IWebElement> wTemps = chromeDriver.FindElementsByCssSelector(".wu-value-to");
-            ReadOnlyCollection<IWebElement> wCloudCoverage = chromeDriver.FindElementsByCssSelector(".wx-value");
-            IWebElement wWindSpead = chromeDriver.FindElementByCssSelector(".wind-speed");
-            ReadOnlyCollection<IWebElement> wTemps2 = chromeDriver.FindElementsByCssSelector(".temp");
-            ReadOnlyCollection<IWebElement> wTimes = chromeDriver.FindElementsByCssSelector(".data-point");
-            IWebElement wPhase = chromeDriver.FindElementByCssSelector(".phase-name");
+            radEnglish.Checked = true;
 
-            weather.highTemp = double.Parse(wTemps[highTempIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
-            weather.lowTemp = double.Parse(wTemps[lowTempIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
-            weather.recordHigh = double.Parse(wTemps[recordHighIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
-            weather.recordLow = double.Parse(wTemps[recordLowIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
-            weather.cloudCover = wCloudCoverage[1].Text;
-            weather.pressure = double.Parse(wTemps[pressureIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
-            weather.windSpeed = double.Parse(wWindSpead.Text);
-            weather.dewPoint = double.Parse(wTemps[dewPointIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
-            weather.currentTemp = Int32.Parse(wTemps[currentTempIndex].Text);
-            weather.heatIndex = removeRawDegree(wTemps2[heatIndexIndex].Text);
-            weather.timeOfDay = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time")).ToString("HH:mm");
-            weather.sunRise = wTimes[sunRiseIndex].Text + " AM";
-            weather.sunSet = wTimes[sunRiseIndex].Text + " PM";
-            weather.moonRise = wTimes[moonRiseIndex].Text + " PM";
-            weather.moonSet = wTimes[moonSetIndex].Text + " AM";
-            weather.moonPhase = wPhase.Text;
-            UpdateFields();
-
-            foreach (IWebElement value in wTimes)
+            try
             {
-                txtbxDEBUG.Text += value.Text + "-";
+                ReadOnlyCollection<IWebElement> wTemps = chromeDriver.FindElementsByCssSelector(".wu-value-to");
+                ReadOnlyCollection<IWebElement> wCloudCoverage = chromeDriver.FindElementsByCssSelector(".wx-value");
+                IWebElement wWindSpead = chromeDriver.FindElementByCssSelector(".wind-speed");
+                ReadOnlyCollection<IWebElement> wTemps2 = chromeDriver.FindElementsByCssSelector(".temp");
+                ReadOnlyCollection<IWebElement> wTimes = chromeDriver.FindElementsByCssSelector(".data-point");
+                IWebElement wPhase = chromeDriver.FindElementByCssSelector(".phase-name");
+
+                weather.highTemp = double.Parse(wTemps[highTempIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
+                weather.lowTemp = double.Parse(wTemps[lowTempIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
+                weather.recordHigh = double.Parse(wTemps[recordHighIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
+                weather.recordLow = double.Parse(wTemps[recordLowIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
+                weather.cloudCover = wCloudCoverage[1].Text;
+                weather.pressure = double.Parse(wTemps[pressureIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
+                weather.windSpeed = double.Parse(wWindSpead.Text);
+                weather.dewPoint = double.Parse(wTemps[dewPointIndex + Int32.Parse(numIndexError.Value.ToString())].Text);
+                weather.currentTemp = Int32.Parse(wTemps[currentTempIndex].Text);
+                weather.heatIndex = removeRawDegree(wTemps2[heatIndexIndex].Text);
+                weather.timeOfDay = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time")).ToString("HH:mm");
+                weather.sunRise = wTimes[sunRiseIndex].Text;
+                weather.sunSet = wTimes[sunRiseIndex].Text;
+                weather.moonRise = wTimes[moonRiseIndex].Text;
+                weather.moonSet = wTimes[moonSetIndex].Text;
+                weather.moonPhase = wPhase.Text;
+                UpdateFields();
+
+                foreach (IWebElement value in wTimes)
+                {
+                    txtbxDEBUG.Text += value.Text + "-";
+                }
             }
+            catch (Exception error)
+            {
+                MessageBox.Show(error.Message, "Scrapping Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private string normalizeTime(string timeOfDay)
+        {
+            char[] timeArray = timeOfDay.ToCharArray();
+            string hours = "";
+            string mins = "";
+            bool onHours = true;
+
+            foreach (char character in timeArray)
+            {
+                if (character != ':')
+                {
+                    if (onHours)
+                    {
+                        hours += character;
+                    } else
+                    {
+                        mins += character;
+                    }
+                } else
+                {
+                    onHours = false;
+                }
+            }
+
+            if (Int32.Parse(hours) < 12)
+            {
+                return (hours + ":" + mins + "AM");
+            } else if (hours == "12")
+            {
+                return (hours + ":" + mins + "PM");
+            } else if (hours == "24") {
+                return (Int32.Parse(hours) - 12 + ":" + mins + " AM");
+            } else
+            {
+                return (Int32.Parse(hours) - 12 + ":" + mins + " PM");
+            }
+        }
+
+        private string addTime(string time, int hoursToAdd)
+        {
+            char[] timeArray = time.ToCharArray();
+            string hours = "";
+            string mins = "";
+            bool onHours = true;
+
+            foreach (char character in timeArray)
+            {
+                if (character != ':')
+                {
+                    if (onHours)
+                    {
+                        hours += character;
+                    }
+                    else
+                    {
+                        mins += character;
+                    }
+                }
+                else
+                {
+                    onHours = false;
+                }
+            }
+
+            hours = (Int32.Parse(hours) + hoursToAdd).ToString();
+            return hours + ":" + mins;
         }
 
         private void btnBranson_Click(object sender, EventArgs e)
@@ -96,6 +179,11 @@ namespace WeatherWebScrapper
         private void btnNaples_Click(object sender, EventArgs e)
         {
             chromeDriver.Navigate().GoToUrl(weatherNaplesFL);
+        }
+
+        private void btnHutch_Click(object sender, EventArgs e)
+        {
+            chromeDriver.Navigate().GoToUrl(weatherHutchMN);
         }
 
         private void btnVisitWeb_Click(object sender, EventArgs e)
@@ -120,44 +208,57 @@ namespace WeatherWebScrapper
 
         private void UpdateFields()
         {
-            txtbxHigh.Text = weather.highTemp.ToString();
-            txtbxLow.Text = weather.lowTemp.ToString();
-            txtbxRecHigh.Text = weather.recordHigh.ToString();
-            txtbxRecLow.Text = weather.recordLow.ToString();
-            txtbxCloudCover.Text = weather.cloudCover.ToString();
-            txtbxPressure.Text = weather.pressure.ToString();
-            txtbxWindSD.Text = weather.windSpeed.ToString();
-            txtbxDew.Text = weather.dewPoint.ToString();
-            txtbxCurrentTemp.Text = weather.currentTemp.ToString();
-            txtbxWCHI.Text = weather.heatIndex.ToString();
-            txtbxTofD.Text = weather.timeOfDay;
-            txtbxSunRS.Text = weather.sunRise + " / " + weather.sunSet;
-            txtbxMoonRS.Text = weather.moonRise + " / " + weather.moonSet;
-            txtbxMoonPhase.Text = weather.moonPhase;
+            try
+            {
+                txtbxHigh.Text = weather.highTemp.ToString();
+                txtbxLow.Text = weather.lowTemp.ToString();
+                txtbxRecHigh.Text = weather.recordHigh.ToString();
+                txtbxRecLow.Text = weather.recordLow.ToString();
+                txtbxCloudCover.Text = weather.cloudCover.ToString();
+                txtbxPressure.Text = weather.pressure.ToString();
+                txtbxWindSD.Text = weather.windSpeed.ToString();
+                txtbxDew.Text = weather.dewPoint.ToString();
+                txtbxCurrentTemp.Text = weather.currentTemp.ToString();
+                txtbxWCHI.Text = weather.heatIndex.ToString();
+                txtbxMoonPhase.Text = weather.moonPhase;
 
-            if (weather.usingEnglish)
-            {
-                txtbxHigh.Text += " °F";
-                txtbxLow.Text += " °F";
-                txtbxRecHigh.Text += " °F";
-                txtbxRecLow.Text += " °F";
-                txtbxPressure.Text += " in Hg";
-                txtbxWindSD.Text += " mph / ";
-                txtbxDew.Text += " °F";
-                txtbxCurrentTemp.Text += " °F";
-                txtbxWCHI.Text += " °F";
+                if (weather.usingEnglish)
+                {
+                    txtbxHigh.Text += " °F";
+                    txtbxLow.Text += " °F";
+                    txtbxRecHigh.Text += " °F";
+                    txtbxRecLow.Text += " °F";
+                    txtbxPressure.Text += " in Hg";
+                    txtbxWindSD.Text += " mph / ";
+                    txtbxDew.Text += " °F";
+                    txtbxCurrentTemp.Text += " °F";
+                    txtbxWCHI.Text += " °F";
+
+                    txtbxTofD.Text = normalizeTime(weather.timeOfDay);
+                    txtbxSunRS.Text = weather.sunRise + " AM/ " + weather.sunSet + " PM";
+                    txtbxMoonRS.Text = weather.moonRise + " PM/ " + weather.moonSet + " AM";
+                }
+                else
+                {
+                    txtbxHigh.Text += " °C";
+                    txtbxLow.Text += " °C";
+                    txtbxRecHigh.Text += " °C";
+                    txtbxRecLow.Text += " °C";
+                    txtbxPressure.Text += " mm Hg";
+                    txtbxWindSD.Text += " m/s / ";
+                    txtbxDew.Text += " °C";
+                    txtbxCurrentTemp.Text += " °C";
+                    txtbxWCHI.Text += " °C";
+
+                    txtbxTofD.Text = weather.timeOfDay;
+                    txtbxSunRS.Text = weather.sunRise + " / " + addTime(weather.sunSet, 12);
+                    txtbxMoonRS.Text = addTime(weather.moonRise, 12) + " / " + weather.moonSet;
+                }
             }
-            else
+            catch (Exception error)
             {
-                txtbxHigh.Text += " °C";
-                txtbxLow.Text += " °C";
-                txtbxRecHigh.Text += " °C";
-                txtbxRecLow.Text += " °C";
-                txtbxPressure.Text += " mm Hg";
-                txtbxWindSD.Text += " m/s / ";
-                txtbxDew.Text += " °C";
-                txtbxCurrentTemp.Text += " °C";
-                txtbxWCHI.Text += " °C";
+                radEnglish.Checked = true;
+                MessageBox.Show(error.Message, "Scrapping Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -167,6 +268,7 @@ namespace WeatherWebScrapper
             {
                 btnBranson.Enabled = true;
                 btnNaples.Enabled = true;
+                btnHutch.Enabled = true;
 
                 txtbxCustomURL.Enabled = false;
                 btnVisitWeb.Enabled = false;
@@ -176,6 +278,7 @@ namespace WeatherWebScrapper
             {
                 btnBranson.Enabled = false;
                 btnNaples.Enabled = false;
+                btnHutch.Enabled = false;
 
                 txtbxCustomURL.Enabled = true;
                 btnVisitWeb.Enabled = true;
@@ -265,6 +368,11 @@ namespace WeatherWebScrapper
         private void txtbxMoonPhase_DoubleClick(object sender, EventArgs e)
         {
             Clipboard.SetText(txtbxMoonPhase.Text);
+        }
+
+        private void WeatherWebScraper_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            chromeDriver.Quit();
         }
     }
 }

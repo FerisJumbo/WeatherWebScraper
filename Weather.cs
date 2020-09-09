@@ -61,6 +61,8 @@ namespace WeatherWebScrapper
                 currentTemp = toCelsius(currentTemp);
                 heatIndex = toCelsius(heatIndex);
 
+
+
                 usingEnglish = false;
             }
         }

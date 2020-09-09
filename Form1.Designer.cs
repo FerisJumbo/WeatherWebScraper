@@ -71,6 +71,8 @@
             this.label18 = new System.Windows.Forms.Label();
             this.txtbxDEBUG = new System.Windows.Forms.TextBox();
             this.numIndexError = new System.Windows.Forms.NumericUpDown();
+            this.btnHutch = new System.Windows.Forms.Button();
+            this.btnNextDayFore = new System.Windows.Forms.Button();
             this.gbxToday.SuspendLayout();
             this.gbxUnits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIndexError)).BeginInit();
@@ -384,9 +386,8 @@
             // radPresets
             // 
             this.radPresets.AutoSize = true;
-            this.radPresets.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.radPresets.Checked = true;
-            this.radPresets.Location = new System.Drawing.Point(521, 188);
+            this.radPresets.Location = new System.Drawing.Point(609, 216);
             this.radPresets.Name = "radPresets";
             this.radPresets.Size = new System.Drawing.Size(82, 17);
             this.radPresets.TabIndex = 23;
@@ -398,7 +399,8 @@
             // radCustomURL
             // 
             this.radCustomURL.AutoSize = true;
-            this.radCustomURL.Location = new System.Drawing.Point(609, 188);
+            this.radCustomURL.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.radCustomURL.Location = new System.Drawing.Point(518, 216);
             this.radCustomURL.Name = "radCustomURL";
             this.radCustomURL.Size = new System.Drawing.Size(85, 17);
             this.radCustomURL.TabIndex = 24;
@@ -408,7 +410,7 @@
             // lblInfo
             // 
             this.lblInfo.AutoSize = true;
-            this.lblInfo.Location = new System.Drawing.Point(269, 251);
+            this.lblInfo.Location = new System.Drawing.Point(246, 251);
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.Size = new System.Drawing.Size(208, 13);
             this.lblInfo.TabIndex = 25;
@@ -416,14 +418,14 @@
             // 
             // txtbxCustomURL
             // 
-            this.txtbxCustomURL.Location = new System.Drawing.Point(260, 228);
+            this.txtbxCustomURL.Location = new System.Drawing.Point(12, 228);
             this.txtbxCustomURL.Name = "txtbxCustomURL";
             this.txtbxCustomURL.Size = new System.Drawing.Size(442, 20);
             this.txtbxCustomURL.TabIndex = 26;
             // 
             // btnVisitWeb
             // 
-            this.btnVisitWeb.Location = new System.Drawing.Point(483, 254);
+            this.btnVisitWeb.Location = new System.Drawing.Point(12, 251);
             this.btnVisitWeb.Name = "btnVisitWeb";
             this.btnVisitWeb.Size = new System.Drawing.Size(219, 23);
             this.btnVisitWeb.TabIndex = 27;
@@ -469,7 +471,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(201, 363);
+            this.label18.Location = new System.Drawing.Point(9, 366);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(48, 13);
             this.label18.TabIndex = 31;
@@ -477,7 +479,7 @@
             // 
             // txtbxDEBUG
             // 
-            this.txtbxDEBUG.Location = new System.Drawing.Point(255, 332);
+            this.txtbxDEBUG.Location = new System.Drawing.Point(63, 335);
             this.txtbxDEBUG.Multiline = true;
             this.txtbxDEBUG.Name = "txtbxDEBUG";
             this.txtbxDEBUG.Size = new System.Drawing.Size(308, 77);
@@ -500,11 +502,32 @@
             this.numIndexError.Size = new System.Drawing.Size(35, 20);
             this.numIndexError.TabIndex = 33;
             // 
+            // btnHutch
+            // 
+            this.btnHutch.Location = new System.Drawing.Point(500, 187);
+            this.btnHutch.Name = "btnHutch";
+            this.btnHutch.Size = new System.Drawing.Size(202, 23);
+            this.btnHutch.TabIndex = 34;
+            this.btnHutch.Text = "Hutchinson, MN";
+            this.btnHutch.UseVisualStyleBackColor = true;
+            this.btnHutch.Click += new System.EventHandler(this.btnHutch_Click);
+            // 
+            // btnNextDayFore
+            // 
+            this.btnNextDayFore.Location = new System.Drawing.Point(12, 418);
+            this.btnNextDayFore.Name = "btnNextDayFore";
+            this.btnNextDayFore.Size = new System.Drawing.Size(449, 21);
+            this.btnNextDayFore.TabIndex = 34;
+            this.btnNextDayFore.Text = "Copy Next Day\'s Forecast";
+            this.btnNextDayFore.UseVisualStyleBackColor = true;
+            // 
             // WeatherWebScraper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(719, 288);
+            this.ClientSize = new System.Drawing.Size(719, 285);
+            this.Controls.Add(this.btnNextDayFore);
+            this.Controls.Add(this.btnHutch);
             this.Controls.Add(this.numIndexError);
             this.Controls.Add(this.txtbxDEBUG);
             this.Controls.Add(this.label18);
@@ -520,6 +543,7 @@
             this.Controls.Add(this.btnScrape);
             this.Name = "WeatherWebScraper";
             this.Text = "WWS";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WeatherWebScraper_FormClosing);
             this.Load += new System.EventHandler(this.WeatherWebScraper_Load);
             this.gbxToday.ResumeLayout(false);
             this.gbxToday.PerformLayout();
@@ -575,6 +599,8 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox txtbxDEBUG;
         private System.Windows.Forms.NumericUpDown numIndexError;
+        private System.Windows.Forms.Button btnHutch;
+        private System.Windows.Forms.Button btnNextDayFore;
     }
 }
 

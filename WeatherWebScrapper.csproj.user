@@ -1,13 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <PublishUrlHistory />
-    <InstallUrlHistory />
+    <PublishUrlHistory>C:\Users\coleg\source\repos\WeatherWebScrapper\WeatherWebScrapper\publish\|\\DESKTOP-0GT1RVK\Users\coleg\source\repos\WeatherWebScrapper\WeatherWebScrapper\publish\|\DESKTOP-0GT1RVK\Users\coleg\source\repos\WeatherWebScrapper\WeatherWebScrapper\publish\|DESKTOP-0GT1RVK\Users\coleg\source\repos\WeatherWebScrapper\WeatherWebScrapper\publish\</PublishUrlHistory>
+    <InstallUrlHistory>\\DESKTOP-0GT1RVK\Users\coleg\source\repos\WeatherWebScrapper\WeatherWebScrapper\publish\</InstallUrlHistory>
     <SupportUrlHistory />
-    <UpdateUrlHistory />
+    <UpdateUrlHistory>https://github.com/FerisJumbo/WeatherWebScraper/</UpdateUrlHistory>
     <BootstrapperUrlHistory />
     <ErrorReportUrlHistory />
     <FallbackCulture>en-US</FallbackCulture>
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnableSecurityDebugging>false</EnableSecurityDebugging>
   </PropertyGroup>
 </Project>
